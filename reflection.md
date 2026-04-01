@@ -2,20 +2,26 @@
 
 ## 1. System Design
 
-**3 Core Actions for Users**
+3 Core Actions for Users
 1. Users should be able to enter and edit their information (availability, schedule, age, etc) and their pet's information.
 2. Users should be able to add and edit tasks and assign to specific pets and dates/times.
 3. Users should be able to view the suggested schedule and reasoning behind it. 
  
 **a. Initial design**
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+The design has 4 classes:
+
+Owner — represents the users information. It stores their availability and is responsible for adding/editing availability and calculating window times.
+
+Pet — stores basic info about a pet (name, breed, special notes). It's responsible for storing and updating pet details and producing a summary of that pet as well. Owners should be able to add/edit this.
+
+Task — represents a care task tied to a specific pet. It holds the task title, how long it takes (duration), its priority level, and which pet it's for. 
+
+MakeSchedule — takes an owner, a list of Pets, and a list of tasks and produces a daily plan by fitting tasks into the owner's available time by priority. It also tracks tasks that couldn't fit (incomplete_tasks) and can explain its reasoning for how the plan was built.
 
 **b. Design changes**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+The AI pointed out a few missing relationships: owner doesn't have a list of pets and tasks in order to make a plan for the pet(s). I asked it to give the Owner both self.pets and self.tasks. 
 
 ---
 
