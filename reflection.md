@@ -2,6 +2,11 @@
 
 ## 1. System Design
 
+**3 Core Actions for Users**
+1. Users should be able to enter and edit their information (availability, schedule, age, etc) and their pet's information.
+2. Users should be able to add and edit tasks and assign to specific pets and dates/times.
+3. Users should be able to view the suggested schedule and reasoning behind it. 
+ 
 **a. Initial design**
 
 - Briefly describe your initial UML design.
