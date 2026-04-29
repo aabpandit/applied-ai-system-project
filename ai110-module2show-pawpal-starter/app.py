@@ -218,7 +218,7 @@ if st.button("Generate schedule"):
 st.divider()
 
 # ── Symptom Triage (RAG + Gemini) ────────────────────────────────────────────
-st.subheader("Symptom Triage")
+st.subheader("Health Chatbot")
 st.caption("Describe your pet's symptoms and get personalised guidance drawn from trusted veterinary sources.")
 
 URGENCY_CONFIG = {
