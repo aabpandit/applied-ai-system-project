@@ -1,5 +1,6 @@
 import streamlit as st
 from pawpal_system import Owner, Pet, Task, MakeSchedule, Scheduler
+from rag_chat import ask as triage_ask
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 st.title("🐾 PawPal+")
@@ -213,3 +214,70 @@ if st.button("Generate schedule"):
 
         with st.expander("Scheduling reasoning"):
             st.text(st.session_state.scheduler.explain_reasoning())
+
+st.divider()
+
+# ── Symptom Triage (RAG + Gemini) ────────────────────────────────────────────
+st.subheader("Symptom Triage")
+st.caption("Describe your pet's symptoms and get personalised guidance drawn from trusted veterinary sources.")
+
+URGENCY_CONFIG = {
+    "emergency": {"icon": "🚨", "color": "error",   "label": "EMERGENCY — Go to an emergency vet immediately"},
+    "urgent":    {"icon": "⚠️",  "color": "warning", "label": "URGENT — See a vet within 24 hours"},
+    "monitor":   {"icon": "👀", "color": "warning", "label": "MONITOR — Watch at home; escalate if it worsens"},
+    "routine":   {"icon": "📅", "color": "info",    "label": "ROUTINE — Schedule a regular vet visit"},
+}
+
+with st.form("triage_form"):
+    symptom_query = st.text_area(
+        "Describe your pet's symptoms",
+        placeholder="e.g. My dog vomited twice this morning and seems really tired...",
+        height=100,
+    )
+    species_filter = st.selectbox("Pet species (optional)", ["Any", "Dog", "Cat"])
+    submitted = st.form_submit_button("Get Advice")
+
+if submitted:
+    if not symptom_query.strip():
+        st.warning("Please describe the symptoms before submitting.")
+    else:
+        species_arg = None if species_filter == "Any" else species_filter.lower()
+        with st.spinner("Finding the best match and generating a response…"):
+            try:
+                result = triage_ask(symptom_query, species=species_arg)
+                match = result["match"]
+                cfg = URGENCY_CONFIG.get(result["urgency"], URGENCY_CONFIG["routine"])
+
+                # ── urgency banner ───────────────────────────────────────────
+                banner = f"{cfg['icon']} **{cfg['label']}**"
+                if cfg["color"] == "error":
+                    st.error(banner)
+                elif cfg["color"] == "warning":
+                    st.warning(banner)
+                else:
+                    st.info(banner)
+
+                # ── Gemini synthesised response ──────────────────────────────
+                st.markdown("**PawPal+ Advice**")
+                st.write(result["response"])
+
+                # ── matched FAQ entry ────────────────────────────────────────
+                if match:
+                    with st.expander(
+                        f"📚 Matched FAQ — similarity {match['score']:.0%} "
+                        f"| {match['category']} | {', '.join(match['species'])}"
+                    ):
+                        st.markdown(f"**Q:** {match['question']}")
+                        st.markdown(f"**A:** {match['answer']}")
+                        st.markdown(
+                            f"**Source:** [{match['source']}]({match['source_url']})"
+                        )
+
+                # ── prompt inspector (dev aid) ───────────────────────────────
+                with st.expander("🔧 Prompt sent to Gemini"):
+                    st.code(result["prompt"], language="markdown")
+
+            except EnvironmentError as exc:
+                st.error(str(exc))
+            except Exception as exc:
+                st.error(f"Something went wrong: {exc}")
