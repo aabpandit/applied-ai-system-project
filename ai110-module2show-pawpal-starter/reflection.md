@@ -1,0 +1,82 @@
+# PawPal+ Project Reflection
+
+## 1. System Design
+
+3 Core Actions for Users
+1. Users should be able to enter and edit their information (availability, schedule, age, etc) and their pet's information.
+2. Users should be able to add and edit tasks and assign to specific pets and dates/times.
+3. Users should be able to view the suggested schedule and reasoning behind it. 
+ 
+**a. Initial design**
+
+The design has 4 classes:
+
+Owner — represents the users information. It stores their availability and is responsible for adding/editing availability and calculating window times.
+
+Pet — stores basic info about a pet (name, breed, special notes). It's responsible for storing and updating pet details and producing a summary of that pet as well. Owners should be able to add/edit this.
+
+Task — represents a care task tied to a specific pet. It holds the task title, how long it takes (duration), its priority level, and which pet it's for. 
+
+MakeSchedule — takes an owner, a list of Pets, and a list of tasks and produces a daily plan by fitting tasks into the owner's available time by priority. It also tracks tasks that couldn't fit (incomplete_tasks) and can explain its reasoning for how the plan was built.
+
+**b. Design changes**
+
+The AI pointed out a few missing relationships: owner doesn't have a list of pets and tasks in order to make a plan for the pet(s). I asked it to give the Owner both self.pets and self.tasks. 
+
+---
+
+## 2. Scheduling Logic and Tradeoffs
+
+**a. Constraints and priorities**
+
+- What constraints does your scheduler consider (for example: time, priority, preferences)?
+- How did you decide which constraints mattered most?
+
+**b. Tradeoffs**
+
+- Describe one tradeoff your scheduler makes.
+- Why is that tradeoff reasonable for this scenario?
+
+---
+
+## 3. AI Collaboration
+
+**a. How you used AI**
+
+- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
+- What kinds of prompts or questions were most helpful?
+
+**b. Judgment and verification**
+
+- Describe one moment where you did not accept an AI suggestion as-is.
+- How did you evaluate or verify what the AI suggested?
+
+---
+
+## 4. Testing and Verification
+
+**a. What you tested**
+
+- What behaviors did you test?
+- Why were these tests important?
+
+**b. Confidence**
+
+- How confident are you that your scheduler works correctly?
+- What edge cases would you test next if you had more time?
+
+---
+
+## 5. Reflection
+
+**a. What went well**
+
+- What part of this project are you most satisfied with?
+
+**b. What you would improve**
+
+- If you had another iteration, what would you improve or redesign?
+
+**c. Key takeaway**
+
+- What is one important thing you learned about designing systems or working with AI on this project?
